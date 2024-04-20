@@ -15,19 +15,6 @@ namespace WebAPI.Controllers
         {
             this.categoryService = categoryService;
         }
-
-        [HttpGet]
-        public List<Category> GetAll()
-        {
-            return categoryService.GetAllCategories();
-        }
-
-        [HttpPost]
-        public void Add([FromBody] Category category)
-        {
-            //Validation, İş  Kuralları, Authentication
-            //Veritabanı bağlantısı
-            categoryService.Add(category);
-        }
+      
     }
 }

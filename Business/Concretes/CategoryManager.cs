@@ -9,47 +9,30 @@ using System.Threading.Tasks;
 
 namespace Business.Concretes
 {
+    //Desin Pattern => Mediator(Servislerin birbirileri ile iletişimini yönetmemizi sağlar..)
     public class CategoryManager : ICategoryService
     {
-        ICategoryRepository _categoryRepository;
+        private readonly ICategoryRepository _categoryRepository;
+        
 
         public CategoryManager(ICategoryRepository categoryRepository)
         {
             _categoryRepository = categoryRepository;
+            
         }
 
-        public void Add(Category category)
+        public Task AddAsync(Category category)
         {
-            _categoryRepository.Add(category);
+            // Kategori eklenirken içerisinde 3 adet ürün gönderilmelidir.
+
+            //CategoryManager => ProductManager
+            throw new NotImplementedException(); 
         }
 
-        public void Delete(Category category)
+        public Category? GetById(int id)
         {
-            var deletedCategory = _categoryRepository.Get(p=>p.Id == category.Id);
-            if (deletedCategory != null)
-            {
-               _categoryRepository.Delete(deletedCategory);
-            }
-        }
-
-        public Category? GetByIdCategory(int id)
-        {
-            return _categoryRepository.Get(p=>p.Id == id);
-        }
-
-        public List<Category> GetAllCategories()
-        {
-            return _categoryRepository.GetList(null);
-        }
-
-        public void Update(Category category)
-        {
-            var updatedCategory = _categoryRepository.Get(p=>p.Id == category.Id);
-            if (updatedCategory != null)
-            {
-                updatedCategory.Name = category.Name;
-                updatedCategory.Id = category.Id;
-            }
+            return _categoryRepository.Get(p => p.Id == id);
         }
     }
 }
+//Bağımlılıklar çift taraflı birbiri içerisinde kullanılamaz. Circular Dependency oluşur.Sonsuz döngüye girmiş olur.

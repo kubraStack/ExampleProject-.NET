@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using Business.Abstracts;
 using Business.Dtos.Product.Requests;
 using Business.Dtos.Product.Responses;
@@ -14,51 +15,36 @@ using System.Threading.Tasks;
 
 namespace Business.Concretes
 {
+    //Eğer başka bir entity'e ihtiyaç duyuluyorsa o entity'nin servisi injection edilir.
     public class ProductManager : IProductService
     {
         private readonly IProductRepository _productRepository;
+       // private readonly ICategoryService _categoryService;
         private readonly IMapper _mapper;
 
         public ProductManager(IProductRepository productRepository, IMapper mapper)
         {
             _productRepository = productRepository;
             _mapper = mapper;
+
         }
 
         //DTO => Data Transfer Object / Dto'ların tanımlanması business katmanında olur
         //Request-Response Pattern => Her istek ve her cevap farklı nesneye sahip olmalıdır.
         public async Task Add(AddProductRequest dto)
         {
-            //ürün ismini kontrol et
-            //fiyatını kontrol et
-
-            if (dto.UnitPrice < 0)  
-               throw new BusinessExeption("Ürün fiyatı 0'dan küçük olamaz !");
+            if (dto.UnitPrice < 0)
+                throw new BusinessExeption("Ürün fiyatı 0'dan küçük olamaz !");
 
             //Aynı isimde 2. ürün eklenemez.
-            Product? productWithSameName = await _productRepository.GetAsync(p=>p.Name == dto.Name);
+            Product? productWithSameName = await _productRepository.GetAsync(p => p.Name == dto.Name);
             if (productWithSameName is not null)
-            {
                 throw new System.Exception("Aynı isimde 2. ürün eklenemez");
-            }
-
-
-            //Async işlemler
-            //Global Ex. Handling => Global Hata Yönetimi
-            //İş Kuralları, Validation => Daha temiz yazarız?
-            //Pipeline Mediator pattern ??
-
-            //Manuel Mapping(Eşleme)
-            //Auto Mapping
-            //Product product = new();
-            //product.Name = dto.Name;    
-            //product.UnitPrice = dto.UnitPrice;
-            //product.Stock = dto.Stock;
-            //product.CategoryId = dto.CategoryId;
-            //product.CreatedDate = DateTime.Now;
-
-            Product product = _mapper.Map<Product>(dto); //Mapper ile maplemek istediğimiz tür ve verilerin transfer edileceği kaynağı belirterek otomatik mapleme yapıldı. 
-
+            //Kategori verilerine ulaş.
+            //Category? category = _categoryService.GetById(request.CategoryId);
+            //if (category is null)
+            //    throw new BusinessExeption("Böyle bir kategori bulunamadı.");
+            Product product = _mapper.Map<Product>(dto);
             await _productRepository.AddAsync(product);
         }
 

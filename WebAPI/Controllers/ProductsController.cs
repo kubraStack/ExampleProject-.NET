@@ -1,7 +1,9 @@
 ﻿using Business.Abstracts;
 using Business.Dtos.Product.Requests;
 using Business.Dtos.Product.Responses;
+using Business.Features.Products.Commands.Create;
 using Entities;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,27 +16,29 @@ namespace WebAPI.Controllers
 
     public class ProductsController : ControllerBase
     {
-        IProductService _productService;
+        
+        private readonly IMediator _mediator;
 
-
-        public ProductsController(IProductService productService)
+        public ProductsController( IMediator mediator)
         {
+
             
-            _productService = productService;
+            _mediator = mediator;
         }
 
         [HttpGet]
         public async Task<List<ListProductResponse>> GetAll()
         {
-            return await _productService.GetAll();
+            //_mediator.Send();
+            return null;
         }
 
         [HttpPost]
-        public async Task Add([FromBody] AddProductRequest dto)
+        public async Task Add([FromBody] CreateProductCommand command )
         {
             //Validation, İş  Kuralları, Authentication
             //Veritabanı bağlantısı
-            await _productService.Add(dto);
+            await _mediator.Send(command);
         }
 
         [HttpGet("Senkron")]
@@ -65,3 +69,10 @@ namespace WebAPI.Controllers
 // Hata yönetimini kolaylaştırır.
 // Süreç İlerlemesi
 // Birleştirme ve Sıralama => Birden fazla asenkron operasyonu birleştirmek veya sıralamak için Task ve Task<T> tipleri kullanılır. Örneğin, Task.WhenAll veya Task.WhenAny gibi metodlarla birden fazla asenkron işlemi koordine edebilirsiniz.
+
+//CQRS => Command Query Responsibility Segregation => Sorguların  ve Komutların Sorumluluklarının Ayrılması
+//CQRS bir servisde yazılan metotları ayrı ayrı yazmamızı ister.Çünkü başka bir servisde kullanılacağı zaman tüm servisi injection etmeye gerek kalmaz.
+//Servislerde gereksiz injection yapmaya Dependency Injection Hell denir.
+
+//Commandlar genellikle veriyi manipüle eden sorgular.
+//Queriler veriyi sorgulayan yapılardır.
