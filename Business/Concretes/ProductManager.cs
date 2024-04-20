@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Business.Abstracts;
-using Business.Dtos.Product;
+using Business.Dtos.Product.Requests;
+using Business.Dtos.Product.Responses;
 using Core.CrossCuttingConcerns.Exceptions.Types;
 using DataAccess.Abstracts;
 using Entities;
@@ -25,7 +26,8 @@ namespace Business.Concretes
         }
 
         //DTO => Data Transfer Object / Dto'ların tanımlanması business katmanında olur
-        public async Task Add(ProductForAddDto dto)
+        //Request-Response Pattern => Her istek ve her cevap farklı nesneye sahip olmalıdır.
+        public async Task Add(AddProductRequest dto)
         {
             //ürün ismini kontrol et
             //fiyatını kontrol et
@@ -69,7 +71,7 @@ namespace Business.Concretes
             }
         }     
 
-        public async Task<List<ProductForListingDto>> GetAll()
+        public async Task<List<ListProductResponse>> GetAll()
         {
             //Cacheleme ?
             List<Product> products = await _productRepository.GetListAsync();
@@ -93,7 +95,7 @@ namespace Business.Concretes
             //    UnitPrice = p.UnitPrice,
             //}).ToList();
 
-            List<ProductForListingDto> response = _mapper.Map<List<ProductForListingDto>>(products);
+            List<ListProductResponse> response = _mapper.Map<List<ListProductResponse>>(products);
             return response;
         }
 
