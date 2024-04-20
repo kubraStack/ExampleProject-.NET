@@ -1,0 +1,51 @@
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
+//Controller'ın kontrol ettiği şey endpointlerdir.
+//Endpointler geliştirerek yazdığımız fonksiyonlara kullanıcının istek atabileceği noktaları tanımlarız.
+
+namespace WebAPI.Controllers
+{
+    //Attribute'lar(asbackler olarak da geçer)
+    //api/products isteği gelirse burayı çağrılır.
+    [Route("api/[controller]")] // -> Route attribute'ünü bir class'a verirsek içindeki parametrenin çağırılmasında bu controller'ın devreye girmesini sağlıyoruz.
+    [ApiController] // -> ApiController attribute'ünü bir class'a verirsek o classın ApiController görevi yapacağını belirtmiş oluruz.
+
+
+    public class ProductsController : ControllerBase
+    {
+        [HttpGet] // İstek geldiğinde çalışmasını istediğimiz endpoint'in üstüne HttpGet yazıyoruz ve istek geldiğinde get metodu çalışarak bu endpoint'i çalıştırıyor.
+        //Http isteğinde birden fazla veri okuyabileceğimiz alan var. (Route Parameters, Query String, Body, Headers)
+        //Body => Post,Put
+        //Route Parameters, Query String, Body => Genelde requestlerin en temel bilgilerini içerir.
+        //Headers => Daha çok yan bilgileri içerir.
+        //FromQuery => Endpoint'in sonuna parametre soru işareti değer olarak alınır eğer birden fazla fromquery yapılacaksa arada '&' işareti olur.Get isteklerinde en çok kullanılan yöntemdir.
+        public string Hello([FromQuery]string name, [FromQuery] string surname )
+        {
+            var language = Request.Headers.AcceptLanguage;
+            if (language == "en")
+            {
+                return "Hello " + name + surname;
+            }
+            return "Merhaba" + name + surname;
+        }
+
+        [HttpGet("{username}")] //Eğer birden fazla get kullanılacaksa istediğimiz get methodunun çalışması için ona ek olarak action ismi vermemiz gerekir.
+
+        //Route Parameters -> İlgili Route'daki parametrelerdir.FromRoute yazıldıktan sonra HettpGet içindeki action yerine süslü parantez içine değişkenin ismini yazılır.En popüler veri alma yöntemidir.
+        public string Tobeto([FromRoute]string username)
+        {
+            return "Tobeto Kullanıcı Adınız: " + username;
+        }
+
+
+        [HttpPost]
+        public Product GoodBye([FromBody] Product product)
+        {
+            return product;
+        }
+    }
+}
+
+//Post ile veritabanına veri ekleriz.Put ile veritabanındaki veriyi güncelleriz.
+Controller'a her istek attığımızda oluşturulan liste tkerar oluşturulur.
