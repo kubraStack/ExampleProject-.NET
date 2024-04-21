@@ -3,12 +3,10 @@ using Business.Abstracts;
 using Core.CrossCuttingConcerns.Exceptions.Types;
 using DataAccess.Abstracts;
 using Entities;
+using FluentValidation;
+using FluentValidation.Results;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Business.Features.Products.Commands.Create
 {
@@ -24,6 +22,7 @@ namespace Business.Features.Products.Commands.Create
             private readonly IProductRepository _productRepository;
             private readonly ICategoryService _categoryService; 
             private readonly IMapper _mapper;
+            
 
             public CreateProductCommandHandler(IProductRepository productRepository, IMapper mapper, ICategoryService categoryService)
             {
@@ -34,8 +33,12 @@ namespace Business.Features.Products.Commands.Create
 
             public async Task Handle(CreateProductCommand request, CancellationToken cancellationToken)
             {
-                if (request.UnitPrice < 0)
-                    throw new BusinessExeption("Ürün fiyatı 0'dan küçük olamaz !");
+                IValidator<CreateProductCommand> validator = new CreatProductCommandValidator();
+               // validator.ValidateAndThrow(request); // Kendi ex. fırlatacak.
+                ValidationResult result =  validator.Validate(request); //Validation'ı yapıcak sonucu verecek. Exception'ı ben fırlatacağım
+                if (!result.IsValid)
+                    throw new ValudationException(result.Errors.Select(i=>i.ErrorMessage).ToList());
+
                 Product? productWithSameName = await _productRepository.GetAsync(p => p.Name == request.Name);
                 if (productWithSameName is not null)
                     throw new System.Exception("Aynı isimde 2. ürün eklenemez");

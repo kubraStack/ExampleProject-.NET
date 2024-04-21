@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Core.CrossCuttingConcerns.Exceptions.HttpProblemDetails;
 using System.Text.Json;
-using Core.CrossCuttingConcerns.Exceptions.HttpProblemDetails;
 using Core.CrossCuttingConcerns.Exceptions.Types;
 using Microsoft.AspNetCore.Http;
+
 
 namespace Core.CrossCuttingConcerns.Exceptions
 {
@@ -36,6 +36,14 @@ namespace Core.CrossCuttingConcerns.Exceptions
                     problemDetails.Detail = ex.Message;
                     problemDetails.Type = "BusinessException";
                     await context.Response.WriteAsync(JsonSerializer.Serialize(problemDetails));
+                }
+                else if (ex is ValudationException)
+                {
+                    //casting
+                    ValudationException valudationException = (ValudationException)ex;
+                    ValidationProblemDetails validationProblemDetails = new ValidationProblemDetails(valudationException.Errors.ToList());
+
+                    await context.Response.WriteAsync(JsonSerializer.Serialize(validationProblemDetails));
                 }
                 else
                 {

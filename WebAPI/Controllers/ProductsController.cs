@@ -5,14 +5,11 @@ using Business.Features.Products.Queries.GetById;
 using Business.Features.Products.Queries.GetList;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace WebAPI.Controllers
 {
-
     [Route("api/[controller]")] 
     [ApiController] 
-
 
     public class ProductsController : ControllerBase
     {
@@ -21,8 +18,6 @@ namespace WebAPI.Controllers
 
         public ProductsController( IMediator mediator)
         {
-
-            
             _mediator = mediator;
         }
 
