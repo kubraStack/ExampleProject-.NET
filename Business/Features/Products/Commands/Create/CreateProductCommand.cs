@@ -22,27 +22,27 @@ namespace Business.Features.Products.Commands.Create
         public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand>
         {
             private readonly IProductRepository _productRepository;
+            private readonly ICategoryService _categoryService; 
             private readonly IMapper _mapper;
 
-            public CreateProductCommandHandler(IProductRepository productRepository, IMapper mapper)
+            public CreateProductCommandHandler(IProductRepository productRepository, IMapper mapper, ICategoryService categoryService)
             {
                 _productRepository = productRepository;
                 _mapper = mapper;
+                _categoryService = categoryService;
             }
 
             public async Task Handle(CreateProductCommand request, CancellationToken cancellationToken)
             {
                 if (request.UnitPrice < 0)
                     throw new BusinessExeption("Ürün fiyatı 0'dan küçük olamaz !");
-
-                //Aynı isimde 2. ürün eklenemez.
                 Product? productWithSameName = await _productRepository.GetAsync(p => p.Name == request.Name);
                 if (productWithSameName is not null)
                     throw new System.Exception("Aynı isimde 2. ürün eklenemez");
-                //Kategori verilerine ulaş.
-                //Category? category = _categoryService.GetById(request.CategoryId);
-                //if (category is null)
-                //    throw new BusinessExeption("Böyle bir kategori bulunamadı.");
+                Category? category = await _categoryService.GetByIdAsync(request.CategoryId);
+                if (category is null)
+                    throw new BusinessExeption("Böyle bir kategori bulunamadı.");
+
                 Product product = _mapper.Map<Product>(request);
                 await _productRepository.AddAsync(product);
             }

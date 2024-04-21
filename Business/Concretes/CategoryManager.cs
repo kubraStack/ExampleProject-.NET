@@ -13,25 +13,16 @@ namespace Business.Concretes
     public class CategoryManager : ICategoryService
     {
         private readonly ICategoryRepository _categoryRepository;
-        
 
         public CategoryManager(ICategoryRepository categoryRepository)
         {
             _categoryRepository = categoryRepository;
-            
         }
 
-        public Task AddAsync(Category category)
+        public async Task<Category?> GetByIdAsync(int id)
         {
-            // Kategori eklenirken içerisinde 3 adet ürün gönderilmelidir.
-
-            //CategoryManager => ProductManager
-            throw new NotImplementedException(); 
-        }
-
-        public Category? GetById(int id)
-        {
-            return _categoryRepository.Get(p => p.Id == id);
+            Category? category = await _categoryRepository.GetAsync(p => p.Id == id);
+            return category;
         }
     }
 }

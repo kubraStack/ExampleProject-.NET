@@ -10,8 +10,7 @@ namespace Business.Abstracts
     public interface ICategoryService
     {
         //TODO: Implement Dtos
-        Category? GetById(int id);
-        Task AddAsync(Category category);
-
+       
+       Task<Category?> GetByIdAsync(int id);   
     }
 }
