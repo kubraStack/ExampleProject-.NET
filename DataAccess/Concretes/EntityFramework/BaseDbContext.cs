@@ -9,6 +9,7 @@ namespace DataAccess.Concretes.EntityFramework
     {
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<User> Users { get; set; }
 
         //OnConfiguring metodunun temel amacı, veritabanı bağlantısı için gerekli olan ayarların tanımlandığı yerdir.
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

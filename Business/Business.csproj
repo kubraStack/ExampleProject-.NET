@@ -21,6 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Features\Auth\Command\Login\" />
+    <Folder Include="Features\Auth\Profiles\" />
     <Folder Include="Features\Categories\" />
   </ItemGroup>
 
