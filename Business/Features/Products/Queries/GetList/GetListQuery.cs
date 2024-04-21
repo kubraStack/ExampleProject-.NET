@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Business.Features.Products.Dtos;
 using DataAccess.Abstracts;
 using Entities;
 using MediatR;
@@ -10,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Business.Features.Products.Queries.GetList
-{                 
+{
     public class GetListQuery :IRequest<List<GetAllProductResponse>>
     {          //Komut(Sorgu)   //Mediator Request <Geri Dönüş Tipi DTO>
 

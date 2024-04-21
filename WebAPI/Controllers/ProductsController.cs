@@ -1,9 +1,11 @@
-﻿using Business.Abstracts;
-using Business.Features.Products.Commands.Create;
-using Entities;
+﻿using Business.Features.Products.Commands.Create;
+using Business.Features.Products.Commands.Delete;
+using Business.Features.Products.Commands.Update;
+using Business.Features.Products.Queries.GetById;
+using Business.Features.Products.Queries.GetList;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace WebAPI.Controllers
 {
@@ -25,17 +27,47 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task Add([FromBody] CreateProductCommand command )
+        public async Task<IActionResult> Add([FromBody] CreateProductCommand command )
         {
             //Validation, İş  Kuralları, Authentication
             //Veritabanı bağlantısı
             await _mediator.Send(command);
+            return Created();
         }
 
-       
-        
+        [HttpGet]
+        public async Task<IActionResult> GetAll([FromQuery] GetListQuery query) //Task<IActionResult> => Yazarak metodun dönüş türünün herhangi bir türde olabileceğini belirttik.
+        {
+            var result =  await _mediator.Send(query);
+            return Ok(result); //Http status içine result gövdesini yazdırır.
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById([FromRoute] int id) //FromRoute kullandığımız için veriyi alıp içeride atamasını yaparız.
+        {
+            GetByIdQuery query = new() { Id = id };
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            DeleteProductCommand command = new() { Id = id };
+            await _mediator.Send(command);  
+            return Ok(); //Refactor
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] UpdateProductCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
     }
 }
+
 
 //Senkron => Bir methodun çalışma anında bir satırı çalıştırırken o satırı bitirmeden alt satıra geçmemesine senktron işlem denir
 //Asenkron => Bir methodun çalışma anında bir satırı çalıştırırken o satırı bitirmeden alt satıra geçebilmesine ve işlemi bloklamayan yapılara asenkron denir.
