@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Business.Abstracts;
+using Core.Application.Pipelines.Logging;
 using Core.CrossCuttingConcerns.Exceptions.Types;
 using DataAccess.Abstracts;
 using Entities;
@@ -10,14 +11,14 @@ using MediatR;
 
 namespace Business.Features.Products.Commands.Create
 {
-    public class CreateProductCommand : IRequest
+    public class CreateProductCommand : IRequest<CreateProductResponse>, ILoggableRequest
     {
         public string Name { get; set; }
         public double UnitPrice { get; set; }
         public int Stock { get; set; }
         public int CategoryId { get; set; }
 
-        public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand>
+        public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, CreateProductResponse>
         {
             private readonly IProductRepository _productRepository;
             private readonly ICategoryService _categoryService; 
@@ -31,13 +32,13 @@ namespace Business.Features.Products.Commands.Create
                 _categoryService = categoryService;
             }
 
-            public async Task Handle(CreateProductCommand request, CancellationToken cancellationToken)
+            public async Task<CreateProductResponse> Handle(CreateProductCommand request, CancellationToken cancellationToken)
             {
                 IValidator<CreateProductCommand> validator = new CreatProductCommandValidator();
                // validator.ValidateAndThrow(request); // Kendi ex. fırlatacak.
                 ValidationResult result =  validator.Validate(request); //Validation'ı yapıcak sonucu verecek. Exception'ı ben fırlatacağım
                 if (!result.IsValid)
-                    throw new ValudationException(result.Errors.Select(i=>i.ErrorMessage).ToList());
+                    throw new Core.CrossCuttingConcerns.Exceptions.Types.ValidationException(result.Errors.Select<ValidationFailure, string>(i=> i.ErrorMessage).ToList());
 
                 Product? productWithSameName = await _productRepository.GetAsync(p => p.Name == request.Name);
                 if (productWithSameName is not null)
@@ -48,7 +49,14 @@ namespace Business.Features.Products.Commands.Create
 
                 Product product = _mapper.Map<Product>(request);
                 await _productRepository.AddAsync(product);
+
+                CreateProductResponse response = _mapper.Map<CreateProductResponse>(product);
+                return response;
             }
+
         }
     }
 }
+
+//Pipeline => MediatR ile Komutlar arasına logicler yerleştirilir ve bu iletişim bunun üzerinden devam eder.
+//ValidationBehavior => AuthBehavior => LogBehavior

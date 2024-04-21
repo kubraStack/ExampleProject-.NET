@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Core.CrossCuttingConcerns.Exceptions.Types
 {
-    public class ValudationException : Exception
+    public class ValidationException : Exception
     {
         public IEnumerable<string> Errors { get; set; }
 
-        public ValudationException(IEnumerable<string> errors)
+        public ValidationException(IEnumerable<string> errors)
         {
             Errors = errors;
         }

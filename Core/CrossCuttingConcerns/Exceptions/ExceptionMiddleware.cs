@@ -37,10 +37,10 @@ namespace Core.CrossCuttingConcerns.Exceptions
                     problemDetails.Type = "BusinessException";
                     await context.Response.WriteAsync(JsonSerializer.Serialize(problemDetails));
                 }
-                else if (ex is ValudationException)
+                else if (ex is ValidationException)
                 {
                     //casting
-                    ValudationException valudationException = (ValudationException)ex;
+                    ValidationException valudationException = (ValidationException)ex;
                     ValidationProblemDetails validationProblemDetails = new ValidationProblemDetails(valudationException.Errors.ToList());
 
                     await context.Response.WriteAsync(JsonSerializer.Serialize(validationProblemDetails));

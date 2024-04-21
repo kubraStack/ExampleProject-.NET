@@ -11,7 +11,7 @@ namespace Business.Features.Products.Commands.Create
     {
         public CreatProductCommandValidator()
         {
-            RuleFor(i => i.Name).NotEmpty();
+            RuleFor(i => i.Name).NotEmpty().WithMessage("İsim alanı boş olamaz.");
             RuleFor(i => i.Stock).GreaterThanOrEqualTo(1);
             //RuleFor(i => i.Name).Must(name => name.StartsWith("A"));
             RuleFor(i => i.UnitPrice).GreaterThanOrEqualTo(1);
@@ -19,7 +19,7 @@ namespace Business.Features.Products.Commands.Create
 
 
             //Kendi kuralımız.
-            RuleFor(i => i.Name).Must(StartsWithA);
+            RuleFor(i => i.Name).Must(StartsWithA).WithMessage("İsim alanı A harfi ile başlamalıdır.");
         }
 
         public bool StartsWithA(string name)
