@@ -2,6 +2,11 @@ using Core.CrossCuttingConcerns.Exceptions.Extentions;
 using Business;
 using DataAccess;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.Extensions.Configuration;
+using Core.Utilities.JWT;
+using Core.Utilities.Encryption;
 
 namespace WebAPI
 {
@@ -33,14 +38,22 @@ namespace WebAPI
             //Middleware => .Net dünyasýnda sistemimiz çalýþýrken Client'ýn attýpý isteðe karþý Server'ýn döndüðü cevab noktasýný ikiye böler.
             //Araya girerek kendi kod bloðunu çalýþtýran.Gerektiðinde dönmesi gereken cevabýn yerine belirli koþullarla cevabý farklý bir þekilde verebilir.
 
+            //string securityKey =  builder.Configuration.GetSection("TokenOptions").GetValue<string>("SecurityKey"); //.net'de json'dan veri okuma
+
+            TokenOptions? tokenOptions = builder.Configuration.GetSection("TokenOptions").Get<TokenOptions>(); //Oluþturduðumuz model class üzerinden jwt bilgilerini alýyoruz.
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
                     //JWT Konfigürasyonlarý...
-                    //TODO: Gerekli alanlarý appsettings.json'dan okuyarak buarada token optionslarý belirle.
                     options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
                     {
-                        // IssuerSigningKey = "";
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = "com.tobeto",
+                        ValidAudience = "tobeto.studens",
+                        IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey)
                     };
                 });
 
