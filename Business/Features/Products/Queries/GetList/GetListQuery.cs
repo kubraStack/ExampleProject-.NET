@@ -17,8 +17,9 @@ namespace Business.Features.Products.Queries.GetList
         //Requestin İstediği Alanlar
         public int Page { get; set; }
         public int PageSize { get; set; }
+        public string[] RequiredRoles => ["Product.Add","Product.Read"];
 
-         //Request'i handler edecek class                 <Komut(Sorgu), Dönüş Tipi>  
+        //Request'i handler edecek class                 <Komut(Sorgu), Dönüş Tipi>  
         public class GetListQueryHandler : IRequestHandler<GetListQuery, List<GetAllProductResponse>>
         {
             private readonly IProductRepository _productRepository;

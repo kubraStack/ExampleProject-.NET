@@ -4,6 +4,7 @@ using Core.Utilities.JWT;
 using DataAccess.Abstracts;
 using Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace Business.Features.Auth.Command.Login
@@ -18,11 +19,13 @@ namespace Business.Features.Auth.Command.Login
         {
             private readonly IUserRepository _userRepository;
             private readonly ITokenHelper _tokenHelper;
+            private readonly IUserOperationClaimRepository _userOperationClaimRepository;
 
-            public LoginCommandHandler(IUserRepository userRepository, ITokenHelper tokenHelper)
+            public LoginCommandHandler(IUserRepository userRepository, ITokenHelper tokenHelper, IUserOperationClaimRepository userOperationClaimRepository)
             {
                 _userRepository = userRepository;
                 _tokenHelper = tokenHelper;
+                _userOperationClaimRepository = userOperationClaimRepository;
             }
 
             public async Task<AccessToken> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -41,8 +44,8 @@ namespace Business.Features.Auth.Command.Login
                 }
 
                 //Kullanıcı rollerini sorgula
-
-               return _tokenHelper.CreateToken(user);
+                List<UserOperationClaim> userOperationClaims = await _userOperationClaimRepository.GetListAsync(i => i.UserId == user.Id, include: i => i.Include(i => i.OperatiomClaim));
+                return _tokenHelper.CreateToken(user, userOperationClaims.Select(i=>(Core.Entities.OperationClaim)i.OperatiomClaim).ToList();
             }
         }
     }

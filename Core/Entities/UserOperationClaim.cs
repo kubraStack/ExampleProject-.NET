@@ -13,3 +13,4 @@ namespace Core.Entities
     }
 }
 //Virtual alanları Entity Framework otomatik tablo olarak oluşturduğu için sildik.
+//Core paketinin amacı sistemi sarmallamak.
