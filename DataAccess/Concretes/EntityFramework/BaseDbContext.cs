@@ -1,4 +1,5 @@
-﻿using Entities;
+﻿using Core.Entities;
+using Entities;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -10,6 +11,10 @@ namespace DataAccess.Concretes.EntityFramework
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<OperationClaim> OperationClaims { get; set; }
+        public DbSet<UserOperationClaim> UserOperationClaims { get; set; }
+        
+
 
         //OnConfiguring metodunun temel amacı, veritabanı bağlantısı için gerekli olan ayarların tanımlandığı yerdir.
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -31,7 +36,10 @@ namespace DataAccess.Concretes.EntityFramework
             // modelBuilder.Entity<Product>().ToTable("ProductTable"); //Var olan tablonun adını değiştirebiliriz.
             //modelBuilder.Entity<Product>().HasOne(i=>i.Category); //Her product'ın bir categorisi olduğunu belirttik.
             modelBuilder.Entity<Product>().Property(i => i.Name).HasColumnName("Name").HasMaxLength(50); //Alanların özelliğini değiştirebiliriz.
+            modelBuilder.Entity<User>().ToTable("Users");
+            //modelBuilder.Entity<UserOperationClaim>().HasMany(i=>i.)
             base.OnModelCreating(modelBuilder);
+
 
 
             //Entity Framework Seed Data => CodeFirst'de çok kullanılır.Veritabanı oluştururken kullanabileceğimiz test verilerini otomatik eklemek.

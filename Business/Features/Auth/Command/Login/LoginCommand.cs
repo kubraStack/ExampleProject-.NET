@@ -40,6 +40,8 @@ namespace Business.Features.Auth.Command.Login
                     throw new BusinessExeption("Giriş başarısız");
                 }
 
+                //Kullanıcı rollerini sorgula
+
                return _tokenHelper.CreateToken(user);
             }
         }

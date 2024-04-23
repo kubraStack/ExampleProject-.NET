@@ -26,8 +26,15 @@ namespace Core.Application.Pipelines.Authorization
             {
                 throw new BusinessExeption("Giriş yapmadınız");
             }
+
+
             TResponse response = await next();
             return response;
         }
     }
 }
+
+
+//Kullanıcı - Rol verisini tanımla
+//Jwt'ye bu bilgiyi ekle
+//JWT doğrulanırken komut rol gerektiriyor ise, rol kontrolü de devreye alınmalı.
