@@ -1,5 +1,6 @@
 ﻿using Business.Abstracts;
 using Business.Concretes;
+using Core.Application.Pipelines.Authorization;
 using Core.Application.Pipelines.Logging;
 using Core.Application.Pipelines.Validation;
 using FluentValidation;
@@ -17,6 +18,7 @@ namespace Business
             config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
                 //Sıralama Önemli
                 config.AddOpenBehavior(typeof(LoggingBehavior<,>));
+                config.AddOpenBehavior(typeof(AuthorizationBehavior<,>));
                 config.AddOpenBehavior(typeof(ValidationBehavior<,>)); // "," yaparak kıstaslara uyan tüm tipler olarak belirlemiş olduk.
                
             });
