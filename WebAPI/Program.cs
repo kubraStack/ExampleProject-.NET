@@ -7,6 +7,7 @@ using System.Text;
 using Microsoft.Extensions.Configuration;
 using Core.Utilities.JWT;
 using Core.Utilities.Encryption;
+using Core;
 
 namespace WebAPI
 {
@@ -25,13 +26,17 @@ namespace WebAPI
             //Singleton => Üretilen baðýmlýlýk uygulama açýk olduðu sürece tek bir kere newlenir her enjeksiyonda o instance kullanýlýr.
             //Scoped =>(API) Ýstek baþýna bir instance oluþturur.
             //Transient => Her adýmda (her talepte) yeni 1 instance oluþturur.
+            TokenOptions? tokenOptions = builder.Configuration.GetSection("TokenOptions").Get<TokenOptions>(); //Oluþturduðumuz model class üzerinden jwt bilgilerini alýyoruz.
+
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-          
+            builder.Services.AddHttpContextAccessor();
             builder.Services.AddBusinessServices();
             builder.Services.AddDataAccessServices();
+            builder.Services.AddCoreServices(tokenOptions);
+            
 
             //Assembly Keywordü => Uygulamanýzýn veya kütüphanenizin derlenmiþ kodunu ve bu kodun çalýþmasý için gereken bileþenlerin bir araya geldiði yapýdýr.(DLL)
 
@@ -40,7 +45,6 @@ namespace WebAPI
 
             //string securityKey =  builder.Configuration.GetSection("TokenOptions").GetValue<string>("SecurityKey"); //.net'de json'dan veri okuma
 
-            TokenOptions? tokenOptions = builder.Configuration.GetSection("TokenOptions").Get<TokenOptions>(); //Oluþturduðumuz model class üzerinden jwt bilgilerini alýyoruz.
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {

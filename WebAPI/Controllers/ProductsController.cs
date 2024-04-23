@@ -3,6 +3,7 @@ using Business.Features.Products.Commands.Delete;
 using Business.Features.Products.Commands.Update;
 using Business.Features.Products.Queries.GetById;
 using Business.Features.Products.Queries.GetList;
+using Core.CrossCuttingConcerns.Exceptions.Types;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,10 +16,12 @@ namespace WebAPI.Controllers
     {
         
         private readonly IMediator _mediator;
+        
 
-        public ProductsController( IMediator mediator)
+        public ProductsController(IMediator mediator)
         {
             _mediator = mediator;
+           
         }
 
         [HttpPost]
@@ -32,7 +35,7 @@ namespace WebAPI.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] GetListQuery query) //Task<IActionResult> => Yazarak metodun dönüş türünün herhangi bir türde olabileceğini belirttik.
-        {
+        {          
             var result =  await _mediator.Send(query);
             return Ok(result); //Http status içine result gövdesini yazdırır.
         }
