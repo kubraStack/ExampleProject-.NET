@@ -1,7 +1,7 @@
-using DataAccess.Concretes.EntityFramework;
 using Core.CrossCuttingConcerns.Exceptions.Extentions;
 using Business;
 using DataAccess;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace WebAPI
 {
@@ -33,6 +33,16 @@ namespace WebAPI
             //Middleware => .Net dünyasýnda sistemimiz çalýþýrken Client'ýn attýpý isteðe karþý Server'ýn döndüðü cevab noktasýný ikiye böler.
             //Araya girerek kendi kod bloðunu çalýþtýran.Gerektiðinde dönmesi gereken cevabýn yerine belirli koþullarla cevabý farklý bir þekilde verebilir.
 
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    //JWT Konfigürasyonlarý...
+                    //TODO: Gerekli alanlarý appsettings.json'dan okuyarak buarada token optionslarý belirle.
+                    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+                    {
+                        // IssuerSigningKey = "";
+                    };
+                });
 
             var app = builder.Build();
 
